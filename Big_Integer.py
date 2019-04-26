@@ -1,4 +1,16 @@
-from node import TwoWayNode
+class Node(object):
+
+    def __init__(self, data, next=None):
+        """Instantiates a Node with default next of None"""
+        self.data = data
+        self.next = next
+
+
+class TwoWayNode(Node):
+
+    def __init__(self, data, previous=None, next=None):
+        Node.__init__(self, data, next)
+        self.previous = previous
 
 
 class BigInteger:
@@ -16,12 +28,32 @@ class BigInteger:
             self.sign = True
 
     def __str__(self):
+        """Return Big Integer  string representation"""
         s = ''
         for item in self.nodes:
             s += item.data
         return s[::-1]
 
+    def __len__(self):
+        """Return length of Big Integer"""
+        return len(self.nodes)
+
+    def __int__(self):
+        """Return int form  of Big Integer"""
+        return int(str(self))
+
+    def __repr__(self):
+        return str(self)
+
+    def _change_sign(self):
+        """Return new Big Integer with changed sign"""
+        if self.sign is True:
+            return BigInteger('-'+str(self))
+        else:
+            return BigInteger(str(self).replace('-',  ''))
+
     def __eq__(self, other):
+        """ Return result of  '==' operation"""
         if str(self) != str(other):
             return False
         if str(self)[0] != str(other)[0]:
@@ -35,6 +67,7 @@ class BigInteger:
             return True
 
     def __ne__(self, other):
+        """ Return result of  '!=' operation"""
         if len(self) != len(other):
             return True
         elif self.sign is True and other.sign is False:
@@ -50,6 +83,7 @@ class BigInteger:
             return False
 
     def __le__(self, other):
+        """ Return result of  '<=' operation"""
         if self == other:
             return True
         elif self < other:
@@ -58,6 +92,7 @@ class BigInteger:
             return False
 
     def __lt__(self, other):
+        """ Return result of  '<' operation"""
         if self == other:
             return False
         elif str(self)[0] == '-' and str(other)[0] != '-':
@@ -84,6 +119,7 @@ class BigInteger:
                     return False
 
     def __ge__(self, other):
+        """ Return result of  '>=' operation"""
         if self == other:
             return True
         elif self > other:
@@ -92,6 +128,7 @@ class BigInteger:
             return False
 
     def __gt__(self, other):
+        """ Return result of  '>' operation"""
         if self == other:
             return False
         elif str(self)[0] == '-' and str(other)[0] != '-':
@@ -121,41 +158,8 @@ class BigInteger:
                     continue
                 return False
 
-    def __len__(self):
-        return len(self.nodes)
-
-    def __int__(self):
-        return int(str(self))
-
-    def __repr__(self):
-        return str(self)
-
-    def __add__(self, other):
-        if self.sign is False and other.sign is True:
-            x = BigInteger(str(self).replace('-', ''))
-            if x > other:
-                return BigInteger('-'+str(x-other))
-            else:
-                return BigInteger(str(other-x))
-
-        elif self.sign is True and other.sign is False:
-            oth = BigInteger(str(other).replace('-', ''))
-            if int(str(self)) < int(str(oth)):
-                return BigInteger('-'+str(oth-self))
-            elif int(str(self)) == int(str(oth)):
-                return BigInteger('0')
-            else:
-                return self.simple_sub(oth)
-
-        elif self.sign is True and other.sign is True:
-            return self.simple_add(other)
-
-        elif self.sign is False and other.sign is False:
-            a = BigInteger(str(self).replace('-', ''))
-            b = BigInteger(str(other).replace('-', ''))
-            return BigInteger('-'+str(a.simple_add(b)))
-
     def simple_add(self, other):
+        """ '+' operation helper """
         s, ost = '', 0
         new_oth = str(other)
         new_self = str(self)
@@ -181,6 +185,7 @@ class BigInteger:
         return BigInteger(s[::-1])
 
     def simple_sub(self, other):
+        """ '-' operation helper """
         s, ost = '', 0
         new_oth = str(other)
         while len(str(new_oth)) < len(str(self)):
@@ -201,7 +206,34 @@ class BigInteger:
             s = s[1:]
         return BigInteger(s)
 
+    def __add__(self, other):
+        """ Return result of  '+' operation"""
+        if self.sign is False and other.sign is True:
+            x = BigInteger(str(self).replace('-', ''))
+            if x > other:
+                return BigInteger('-'+str(x-other))
+            else:
+                return BigInteger(str(other-x))
+
+        elif self.sign is True and other.sign is False:
+            oth = BigInteger(str(other).replace('-', ''))
+            if int(str(self)) < int(str(oth)):
+                return BigInteger('-'+str(oth-self))
+            elif int(str(self)) == int(str(oth)):
+                return BigInteger('0')
+            else:
+                return self.simple_sub(oth)
+
+        elif self.sign is True and other.sign is True:
+            return self.simple_add(other)
+
+        elif self.sign is False and other.sign is False:
+            a = BigInteger(str(self).replace('-', ''))
+            b = BigInteger(str(other).replace('-', ''))
+            return BigInteger('-'+str(a.simple_add(b)))
+
     def __sub__(self, other):
+        """ Return result of  '-' operation"""
         if int(self) == int(other):
             return BigInteger('0')
         elif self.sign is True and other.sign is True:
@@ -233,6 +265,7 @@ class BigInteger:
                 return BigInteger('-'+str(a+other))
 
     def __mul__(self, other):
+        """ Return result of  '*' operation"""
         term = int(str(other))
         res, ost = '', 0
         if term < 0:
@@ -264,19 +297,15 @@ class BigInteger:
                     ost = m // 10
             return BigInteger(res[::-1])
 
-    def _change_sign(self):
-        if self.sign is True:
-            return BigInteger('-'+str(self))
-        else:
-            return BigInteger(str(self).replace('-',''))
-
     def __pow__(self, power, modulo=None):
+        """ Return result of  '**' operation"""
         result = BigInteger('1')
         for x in range(int(power)):
             result = BigInteger(str(result*self))
         return result
 
     def __floordiv__(self, other):  # //
+        """ Return result of  '//' operation"""
         if str(other) == '0':
             raise ZeroDivisionError
         if int(other) == 1 and other.sign is True:
@@ -287,7 +316,8 @@ class BigInteger:
             return BigInteger('-1')
         elif int(other) == 1 and other.sign is False:
             return BigInteger('-1')
-        elif (self.sign and other.sign and self<other) or (self.sign is False and other.sign is False and self>other):
+        elif (self.sign and other.sign and self < other) or \
+                (self.sign is False and other.sign is False and self > other):
             return BigInteger('0')
         elif self.sign is False and int(self._change_sign()) >= int(other):
             return BigInteger('-1')
@@ -299,12 +329,8 @@ class BigInteger:
                 probe -= other
         return probe+other
 
-
-    def __truediv__(self, other):  # /
-        pass
-
-
     def __mod__(self, other):
+        """ Return result of  '%' operation"""
         if int(other) == 1:
             return BigInteger('0')
         if str(self) == '1' and other.sign is True:
@@ -327,13 +353,20 @@ class BigInteger:
                 while int(probe) >= int(y):
                     probe = probe.simple_sub(y)
                 return probe
-            
-    def _to_binary(self):
-    assert int(self) >= 0
-    res = "{0:b}".format(int(self))
-    return BigInteger(res)
 
-    def __xor__(self, other):  # ^
+    def _to_binary(self):
+        """ Return number in binary form"""
+        assert int(self) >= 0
+        res = "{0:b}".format(int(self))
+        return BigInteger(res)
+
+    def _to_decimal(self):
+        """ Return number in decimal form"""
+        res = str(int(str(self), 2))
+        return BigInteger(res)
+
+    def __xor__(self, other):
+        """ Return result of  '^' operation"""
         self_bin = self._to_binary()
         other_bin = str(other._to_binary())
         while len(other_bin) < len(self_bin):
@@ -341,19 +374,49 @@ class BigInteger:
         other_bin = BigInteger(other_bin)
         y = int(str(self_bin), 2) ^ int(str(other_bin), 2)
         res = bin(y)[2:].zfill(len(self_bin))
-        return BigInteger(res)._from_bin()
-    
+        return BigInteger(res)._to_decimal()
+
     def __rshift__(self, other):  # >>
+        """ Return result of  '>>' operation"""
         self_bin = self._to_binary()
-        if len(str(self_bin))<=int(other):
+        if len(str(self_bin)) <= int(other):
             return BigInteger('0')
         else:
+            new = ''
             for x in range(int(other)):
                 new = str(self_bin)[:-1]
-            return BigInteger(new)._from_bin()
+            return BigInteger(new)._to_decimal()
 
-    def __lshift__(self, other):  # <<
+    def __lshift__(self, other):
+        """ Return result of  '<<' operation"""
         return self*pow(2, int(other))
-    def __and__(self, other):  # &
-                pass
- 
+
+    def __or__(self, other):
+        """Implementation of '|' bitwise method"""
+        res = str()
+        self_bin = str(self._to_binary())
+        other_bin = str(other._to_binary())
+        while len(self_bin) < len(other_bin):
+            self_bin = '0' + str(self_bin)
+        while len(other_bin) < len(self_bin):
+            other_bin = '0' + str(other_bin)
+        other_bin = BigInteger(other_bin)
+        self_bin = BigInteger(self_bin)
+        for x in range(-len(other_bin), 0):
+            res += str(int(other_bin.nodes[x].data) | int(self_bin.nodes[x].data))
+        return BigInteger(res[::-1])._to_decimal()
+
+    def __and__(self, other):
+        """Implementation of '&' bitwise method"""
+        res = str()
+        self_bin = str(self._to_binary())
+        other_bin = str(other._to_binary())
+        while len(self_bin) < len(other_bin):
+            self_bin = '0' + str(self_bin)
+        while len(other_bin) < len(self_bin):
+            other_bin = '0' + str(other_bin)
+        other_bin = BigInteger(other_bin)
+        self_bin = BigInteger(self_bin)
+        for x in range(-len(other_bin), 0):
+            res += str(int(other_bin.nodes[x].data) & int(self_bin.nodes[x].data))
+        return BigInteger(res[::-1])._to_decimal()
