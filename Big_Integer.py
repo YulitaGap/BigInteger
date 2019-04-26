@@ -233,7 +233,6 @@ class BigInteger:
                 return BigInteger('-'+str(a+other))
 
     def __mul__(self, other):
-        """Implementation of '*' method"""
         term = int(str(other))
         res, ost = '', 0
         if term < 0:
@@ -306,9 +305,6 @@ class BigInteger:
 
 
     def __mod__(self, other):
-        """
-        Method for mod division. Implementation of % operator.
-        """
         if int(other) == 1:
             return BigInteger('0')
         if str(self) == '1' and other.sign is True:
@@ -331,142 +327,26 @@ class BigInteger:
                 while int(probe) >= int(y):
                     probe = probe.simple_sub(y)
                 return probe
-    def __or__(self, other):
-        """Implementation of '|' bitwise method"""
-        res = str()
-        self_bin = self._to_bin()
-        other_bin = other._to_bin()
-        self_tail = self_bin.tail
-        other_tail = other_bin.tail
-        while self_tail is not None and other_tail is not None:
-            digit = int(self_tail.data) | int(other_tail.data)
-            res += str(digit)
-            self_tail = self_tail.previous
-            other_tail = other_tail.previous
-        while self_tail is not None:
-            digit = int(self_tail.data) | 0
-            res += str(digit)
-            self_tail = self_tail.previous
-        while other_tail is not None:
-            digit = int(other_tail.data) | 0
-            res += str(digit)
-            other_tail = other_tail.previous
-        return BigInteger(res[::-1])._from_bin()
+            
+    def _to_binary(self):
+    assert int(self) >= 0
+    res = "{0:b}".format(int(self))
+    return BigInteger(res)
 
-    def __and__(self, other):
-        """Implementation of '&' bitwise method"""
-        res = str()
-        self_bin = self._to_bin()
-        other_bin = other._to_bin()
-        self_tail = self_bin.tail
-        other_tail = other_bin.tail
-        while self_tail is not None and other_tail is not None:
-            digit = int(self_tail.data) & int(other_tail.data)
-            res += str(digit)
-            self_tail = self_tail.previous
-            other_tail = other_tail.previous
-        while self_tail is not None:
-            digit = int(self_tail.data) & 0
-            res += str(digit)
-            self_tail = self_tail.previous
-        while other_tail is not None:
-            digit = int(other_tail.data) & 0
-            res += str(digit)
-            other_tail = other_tail.previous
-        return BigInteger(res[::-1])._from_bin()
-
-    def _to_bin(self):
-        """Converts normal Big Integer into Big binary number"""
-        assert int(self) >= 0, 'Only positive values pass'
-        res = "{0:b}".format(int(self))
-        return BigInteger(res)
-
-    def __xor__(self, other):
-        """Implementation of '^' bitwise method"""
-        self_bin = self._to_bin()
-        other_bin = str(other._to_bin())
+    def __xor__(self, other):  # ^
+        self_bin = self._to_binary()
+        other_bin = str(other._to_binary())
         while len(other_bin) < len(self_bin):
             other_bin = '0' + str(other_bin)
         other_bin = BigInteger(other_bin)
         y = int(str(self_bin), 2) ^ int(str(other_bin), 2)
         res = bin(y)[2:].zfill(len(self_bin))
         return BigInteger(res)._from_bin()
+    def __and__(self, other):  # &
+        pass
 
+    def __lshift__(self, other):  # <<
+        pass
 
-    def __rshift__(self, other):
-        """Implementation of '>>' bitwise method"""
-        self_bin = self._to_bin()
-        if 
-
-    def __lshift__(self, other):
-        """Implementation of '<<' bitwise method"""
-        self_bin = self._to_bin()
-        for i in range(int(str(other))):
-            self_bin.tail.next = TwoWayNode('0', self_bin.tail, None)
-            self_bin.tail = self_bin.tail.next
-        return self_bin._from_bin()
-
-    def toString(self):
-        """Function for returning string representation of Big Integer"""
-        return str(self)
-
-
-
-    def _from_bin(self):
-        """Converts Big binary number into normal Big Integer"""
-        res = str(int(str(self), 2))
-        return BigInteger(res)
-
-
-
-    # def _to_binary(self):
-    #     assert int(self) >= 0, 'Only positive values pass'
-    #     res = "{0:b}".format(int(self))
-    #     return BigInteger(res)
-    # 
-    # def _to_decimal(self):
-    #     res = str(int(str(self), 2))
-    #     resu;t = int(str(self), 2)
-    #     return BigInteger(res)
-    # 
-    # def __xor__(self, other):  # ^
-    #     print(self,other)
-    #     x = str(self._to_binary())[2:]
-    #     y = str(other._to_binary())[2:]
-    #     # for i in range(len(x)-1):
-    #     #     if x[i] == "0" and y[i] == "1" or x[i] == "1" and y[i] == "0":
-    #     #         ans += "1"
-    #     #     else:
-    #     #         ans += "0"
-    #     ans = ''.join('0' if i == j else '1' for i, j in zip(x, y))
-    #     return BigInteger(ans)._to_decimal()
-    # 
-    # def __or__(self, other):  # |
-    # 
-    #     res = str()
-    #     self_bin = self._to_binary()
-    #     other_bin = other._to_binary()
-    #     self_tail = self.nodes[0]
-    #     other_tail = other_bin.nodes[0]
-    #     while self_tail is not None and other_tail is not None:
-    #         digit = int(self_tail.data) | int(other_tail.data)
-    #         res += str(digit)
-    #         self_tail = self_tail.previous
-    #         other_tail = other_tail.previous
-    #     while self_tail is not None:
-    #         digit = int(self_tail.data) | 0
-    #         res += str(digit)
-    #         self_tail = self_tail.previous
-    #     while other_tail is not None:
-    #         digit = int(other_tail.data) | 0
-    #         res += str(digit)
-    #         other_tail = other_tail.previous
-    #     return BigInteger(res[::-1])._to_decimal()
-    # 
-    # def __and__(self, other):  # &
-    #     pass
-    # 
-    # def __lshift__(self, other):  # <<
-    #     pass
-    # 
-    # def __rshift__(self, other):  # >>
+    def __rshift__(self, other):  # >>
+        pass
