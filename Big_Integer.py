@@ -342,11 +342,18 @@ class BigInteger:
         y = int(str(self_bin), 2) ^ int(str(other_bin), 2)
         res = bin(y)[2:].zfill(len(self_bin))
         return BigInteger(res)._from_bin()
-    def __and__(self, other):  # &
-        pass
+    
+    def __rshift__(self, other):  # >>
+        self_bin = self._to_binary()
+        if len(str(self_bin))<=int(other):
+            return BigInteger('0')
+        else:
+            for x in range(int(other)):
+                new = str(self_bin)[:-1]
+            return BigInteger(new)._from_bin()
 
     def __lshift__(self, other):  # <<
-        pass
-
-    def __rshift__(self, other):  # >>
-        pass
+        return self*pow(2, int(other))
+    def __and__(self, other):  # &
+                pass
+ 
